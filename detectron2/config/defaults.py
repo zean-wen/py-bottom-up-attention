@@ -26,6 +26,9 @@ _C.MODEL.KEYPOINT_ON = False
 _C.MODEL.DEVICE = "cuda"
 _C.MODEL.META_ARCHITECTURE = "GeneralizedRCNN"
 
+# Caffe Options
+_C.MODEL.CAFFE_MAXPOOL = False
+
 # Path (possibly with schema like catalog:// or detectron2://) to a checkpoint file
 # to be loaded to the model. You can find available models in the model zoo.
 _C.MODEL.WEIGHTS = ""
@@ -75,8 +78,6 @@ _C.INPUT.CROP.SIZE = [0.9, 0.9]
 # with BGR being the one exception. One can set image format to BGR, we will
 # internally use RGB for conversion and flip the channels over
 _C.INPUT.FORMAT = "BGR"
-# The ground truth mask format that the model will use.
-# Mask R-CNN supports either "polygon" or "bitmask" as ground truth.
 _C.INPUT.MASK_FORMAT = "polygon"  # alternative: "bitmask"
 
 
@@ -150,6 +151,7 @@ _C.MODEL.FPN.FUSE_TYPE = "sum"
 _C.MODEL.PROPOSAL_GENERATOR = CN()
 # Current proposal generators include "RPN", "RRPN" and "PrecomputedProposals"
 _C.MODEL.PROPOSAL_GENERATOR.NAME = "RPN"
+_C.MODEL.PROPOSAL_GENERATOR.HID_CHANNELS = -1
 # Proposal height and width both need to be greater than MIN_SIZE
 # (a the scale used during training or inference)
 _C.MODEL.PROPOSAL_GENERATOR.MIN_SIZE = 0
@@ -177,11 +179,7 @@ _C.MODEL.ANCHOR_GENERATOR.ASPECT_RATIOS = [[0.5, 1.0, 2.0]]
 # list[float], the angle in degrees, for each input feature map.
 # ANGLES[i] specifies the list of angles for IN_FEATURES[i].
 _C.MODEL.ANCHOR_GENERATOR.ANGLES = [[-90, 0, 90]]
-# Relative offset between the center of the first anchor and the top-left corner of the image
-# Units: fraction of feature map stride (e.g., 0.5 means half stride)
-# Allowed values are floats in [0, 1) range inclusive.
-# Recommended value is 0.5, although it is not expected to affect model accuracy.
-_C.MODEL.ANCHOR_GENERATOR.OFFSET = 0.0
+
 
 # ---------------------------------------------------------------------------- #
 # RPN options
@@ -286,6 +284,7 @@ _C.MODEL.ROI_BOX_HEAD.POOLER_RESOLUTION = 14
 _C.MODEL.ROI_BOX_HEAD.POOLER_SAMPLING_RATIO = 0
 # Type of pooling operation applied to the incoming feature map for each RoI
 _C.MODEL.ROI_BOX_HEAD.POOLER_TYPE = "ROIAlignV2"
+_C.MODEL.ROI_BOX_HEAD.RES5HALVE = True
 
 _C.MODEL.ROI_BOX_HEAD.NUM_FC = 0
 # Hidden layer dimension for FC layers in the RoI box head
@@ -497,7 +496,6 @@ _C.SOLVER.WEIGHT_DECAY = 0.0001
 _C.SOLVER.WEIGHT_DECAY_NORM = 0.0
 
 _C.SOLVER.GAMMA = 0.1
-# The iteration number to decrease learning rate by GAMMA.
 _C.SOLVER.STEPS = (30000,)
 
 _C.SOLVER.WARMUP_FACTOR = 1.0 / 1000
@@ -554,14 +552,9 @@ _C.OUTPUT_DIR = "./output"
 # Set seed to positive to use a fixed seed. Note that a fixed seed does not
 # guarantee fully deterministic behavior.
 _C.SEED = -1
-# Benchmark different cudnn algorithms.
-# If input images have very different sizes, this option will have large overhead
-# for about 10k iterations. It usually hurts total time, but can benefit for certain models.
-# If input images have the same or similar sizes, benchmark is often helpful.
+# Benchmark different cudnn algorithms. It has large overhead for about 10k
+# iterations. It usually hurts total time, but can benefit for certain models.
 _C.CUDNN_BENCHMARK = False
-# The period (in terms of steps) for minibatch visualization at train time.
-# Set to 0 to disable.
-_C.VIS_PERIOD = 0
 
 # global config is for quick hack purposes.
 # You can set them in command line or config files,

@@ -197,9 +197,8 @@ class ROIHeads(torch.nn.Module):
         Prepare some proposals to be used to train the ROI heads.
         It performs box matching between `proposals` and `targets`, and assigns
         training labels to the proposals.
-        It returns ``self.batch_size_per_image`` random samples from proposals and groundtruth
-        boxes, with a fraction of positives that is no larger than
-        ``self.positive_sample_fraction``.
+        It returns `self.batch_size_per_image` random samples from proposals and groundtruth boxes,
+        with a fraction of positives that is no larger than `self.positive_sample_fraction.
 
         Args:
             See :meth:`ROIHeads.forward`
@@ -208,12 +207,10 @@ class ROIHeads(torch.nn.Module):
             list[Instances]:
                 length `N` list of `Instances`s containing the proposals
                 sampled for training. Each `Instances` has the following fields:
-
                 - proposal_boxes: the proposal boxes
                 - gt_boxes: the ground-truth box that the proposal is assigned to
                   (this is only meaningful if the proposal has a label > 0; if label = 0
-                  then the ground-truth box is random)
-
+                   then the ground-truth box is random)
                 Other fields such as "gt_classes", "gt_masks", that's included in `targets`.
         """
         gt_boxes = [x.gt_boxes for x in targets]
@@ -292,7 +289,6 @@ class ROIHeads(torch.nn.Module):
                 `Instances` contains the ground-truth per-instance annotations
                 for the i-th input image.  Specify `targets` during training only.
                 It may have the following fields:
-
                 - gt_boxes: the bounding box of each instance.
                 - gt_classes: the label for each instance with a category ranging in [0, #class].
                 - gt_masks: PolygonMasks or BitMasks, the ground-truth masks of each instance.
@@ -300,10 +296,10 @@ class ROIHeads(torch.nn.Module):
 
         Returns:
             results (list[Instances]): length `N` list of `Instances`s containing the
-            detected instances. Returned during inference only; may be [] during training.
-
-            losses (dict[str->Tensor]):
-            mapping from a named loss to a tensor storing the loss. Used during training only.
+                detected instances. Returned during inference only; may be []
+                during training.
+            losses (dict[str: Tensor]): mapping from a named loss to a tensor
+                storing the loss. Used during training only.
         """
         raise NotImplementedError()
 
@@ -327,6 +323,7 @@ class Res5ROIHeads(ROIHeads):
         pooler_scales     = (1.0 / self.feature_strides[self.in_features[0]], )
         sampling_ratio    = cfg.MODEL.ROI_BOX_HEAD.POOLER_SAMPLING_RATIO
         self.mask_on      = cfg.MODEL.MASK_ON
+        res5_halve        = cfg.MODEL.ROI_BOX_HEAD.RES5HALVE
         # fmt: on
         assert not cfg.MODEL.KEYPOINT_ON
 
@@ -338,6 +335,16 @@ class Res5ROIHeads(ROIHeads):
         )
 
         self.res5, out_channels = self._build_res5_block(cfg)
+        if not res5_halve:
+            print("Modifications for VG in RoI heads (modeling/roi_heads/roi_heads.py):\n"
+                  "\t1. Change the stride of conv1 and shortcut in Res5.Block1 from 2 to 1.\n"
+                  "\t2. Modifying all conv2 with (padding: 1 --> 2) and (dilation: 1 --> 2).\n"
+                  "\tFor more details, please check 'https://github.com/peteanderson80/bottom-up-attention/blob/master/models/vg/ResNet-101/faster_rcnn_end2end_final/test.prototxt'.\n")
+            self.res5[0].conv1.stride = (1, 1)
+            self.res5[0].shortcut.stride = (1, 1)
+            for i in range(3):
+                self.res5[i].conv2.padding = (2, 2)
+                self.res5[i].conv2.dilation = (2, 2)
         self.box_predictor = FastRCNNOutputLayers(
             out_channels, self.num_classes, self.cls_agnostic_bbox_reg
         )
