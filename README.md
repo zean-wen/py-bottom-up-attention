@@ -7,7 +7,7 @@ The detectron2 system with *exact same* weight as the Caffe VG detection.
 ## Installation
 ```
 git clone https://github.com/airsplay/py-bottom-up-attention.git
-cd detectron2
+cd py-bottom-up-attention
 
 # Install python libraries
 pip install -r requirements.txt
