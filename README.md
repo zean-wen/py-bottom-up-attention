@@ -1,6 +1,8 @@
 # Bottom-up Attention with Detectron2 
 
-and could extract the f
+**Previewing**
+
+The detectron2 system with *exact same* weight as the Caffe VG detection.
 
 ## Installation
 ```
