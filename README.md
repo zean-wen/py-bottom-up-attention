@@ -1,8 +1,12 @@
 # Bottom-up Attention with Detectron2 
 
-**Previewing**
+**Previewing only; This project is still under construction **
 
-The detectron2 system with *exact same* weight as the Caffe VG detection.
+The detectron2 system with **exact same model and weight** as the Caffe VG Faster R-CNN provided in [bottom-up-attetion](https://github.com/peteanderson80/bottom-up-attention).
+
+The features extracted from this repo is compatible with LXMERT code and pre-trained models [here](https://github.com/airsplay/lxmert).
+The original [bottom-up-attetion] is implemented based on [Caffe](https://github.com/BVLC/caffe), which is not easy to install and is inconsistent with the training code in PyTorch.
+Our project thus transfers the weights and models to [detectron2](https://github.com/facebookresearch/detectron2) that could be few-line installed and has PyTorch front-end.
 
 ## Installation
 ```
@@ -30,11 +34,12 @@ python setup.py build develop
 ### Feature Extraction
 1. Single image: [demo extraction](demo/demo_feature_extraction.ipynb)
 2. Batchwise extraction: [demo batchwise extraction](demo/demo_batchwise_feature_extraction.ipynb)
-3. Extract features for given boxes: [demo batchwise extraction](demo/demo_batchwise_feature_extraction.ipynb)
+3. Extract features for given boxes: 
 
 ## Feature Extraction Scripts for LXMERT
 
-## Citing
+
+## References
 
 Detectron2:
 ```BibTeX
@@ -56,3 +61,14 @@ Bottom-up Attention:
   year = {2018}
 }
 ```
+
+LXMERT:
+```BibTeX
+@inproceedings{tan2019lxmert,
+  title={LXMERT: Learning Cross-Modality Encoder Representations from Transformers},
+  author={Tan, Hao and Bansal, Mohit},
+  booktitle={Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing},
+  year={2019}
+}
+```
+
