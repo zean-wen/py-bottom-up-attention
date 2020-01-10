@@ -1,7 +1,5 @@
 # Bottom-up Attention with Detectron2 
 
-**Previewing only; This project is still under construction **
-
 The detectron2 system with **exact same model and weight** as the Caffe VG Faster R-CNN provided in [bottom-up-attetion](https://github.com/peteanderson80/bottom-up-attention).
 
 The features extracted from this repo is compatible with LXMERT code and pre-trained models [here](https://github.com/airsplay/lxmert).
@@ -28,15 +26,16 @@ python setup.py build develop
 ```
 
 ## Demos
-### Detection
+
+### Object Detection
 [demo vg detection](demo/demo_vg_detection.ipynb)
 
-### Feature Extraction
+### Feature Extraction 
 1. Single image: [demo extraction](demo/demo_feature_extraction.ipynb)
 2. Batchwise extraction: [demo batchwise extraction](demo/demo_batchwise_feature_extraction.ipynb)
-3. Extract features for given boxes: 
 
 ## Feature Extraction Scripts for LXMERT
+1. For MS COCO (VQA): [vqa script](demo/detectron2_mscoco_proposal_maxnms.py)
 
 
 ## References
