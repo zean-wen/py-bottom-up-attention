@@ -324,6 +324,8 @@ class Res5ROIHeads(ROIHeads):
         sampling_ratio    = cfg.MODEL.ROI_BOX_HEAD.POOLER_SAMPLING_RATIO
         self.mask_on      = cfg.MODEL.MASK_ON
         res5_halve        = cfg.MODEL.ROI_BOX_HEAD.RES5HALVE
+        use_attr          = cfg.MODEL.ROI_BOX_HEAD.ATTR
+        num_attrs         = cfg.MODEL.ROI_BOX_HEAD.NUM_ATTRS
         # fmt: on
         assert not cfg.MODEL.KEYPOINT_ON
 
@@ -346,7 +348,8 @@ class Res5ROIHeads(ROIHeads):
                 self.res5[i].conv2.padding = (2, 2)
                 self.res5[i].conv2.dilation = (2, 2)
         self.box_predictor = FastRCNNOutputLayers(
-            out_channels, self.num_classes, self.cls_agnostic_bbox_reg
+            out_channels, self.num_classes, self.cls_agnostic_bbox_reg, 
+            use_attr=use_attr, num_attrs=num_attrs
         )
 
         if self.mask_on:
