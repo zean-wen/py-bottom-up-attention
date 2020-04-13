@@ -34,7 +34,7 @@ python setup.py build develop
 
 ### Feature Extraction 
 1. Single image: [demo extraction](demo/demo_feature_extraction.ipynb)
-2. Batchwise extraction: [demo batchwise extraction](demo/demo_batchwise_feature_extraction.ipynb)
+2. Single image (Given boxes): [demo extraction](demo/demo_feature_extraction_given_box.ipynb)
 
 ## Feature Extraction Scripts for LXMERT
 1. For MS COCO (VQA): [vqa script](demo/detectron2_mscoco_proposal_maxnms.py)
