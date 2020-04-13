@@ -33,11 +33,18 @@ python setup.py build develop
 [demo vg detection](demo/demo_vg_detection.ipynb)
 
 ### Feature Extraction 
+With Attributes:
+1. Single image: [demo extraction](demo/demo_feature_extraction_attr.ipynb)
+2. Single image (Given boxes): [demo extraction](demo/demo_feature_extraction_attr_given_box.ipynb)
+
+Without Attributes:
 1. Single image: [demo extraction](demo/demo_feature_extraction.ipynb)
 2. Single image (Given boxes): [demo extraction](demo/demo_feature_extraction_given_box.ipynb)
 
 ## Feature Extraction Scripts for LXMERT
+**Note: this script does not include attribute. If you want to use attributes, please modify it according to [the demo](demo/demo_feature_extraction_attr.ipynb)**
 1. For MS COCO (VQA): [vqa script](demo/detectron2_mscoco_proposal_maxnms.py)
+
 
 
 ## References
