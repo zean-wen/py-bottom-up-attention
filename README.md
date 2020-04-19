@@ -1,5 +1,10 @@
 # Bottom-up Attention with Detectron2 
 
+**Important: the weight temporarily could not be automatically downloaded due to a maintenance of our servers, please first download the model weight with following commands manually:**
+```
+wget --no-check-certificate https://nlp1.cs.unc.edu/models/faster_rcnn_from_caffe_attr.pkl -P ~/.torch/fvcore_cache/models/
+wget --no-check-certificate https://nlp1.cs.unc.edu/models/faster_rcnn_from_caffe.pkl -P ~/.torch/fvcore_cache/models/
+```
 The detectron2 system with **exactly the same model and weight** as the Caffe VG Faster R-CNN provided in [bottom-up-attetion](https://github.com/peteanderson80/bottom-up-attention).
 
 The original [bottom-up-attetion](https://github.com/peteanderson80/bottom-up-attention) is implemented based on [Caffe](https://github.com/BVLC/caffe), which is not easy to install and is inconsistent with the training code in PyTorch.
