@@ -10,7 +10,7 @@ The detectron2 system with **exactly the same model and weight** as the Caffe VG
 The original [bottom-up-attetion](https://github.com/peteanderson80/bottom-up-attention) is implemented based on [Caffe](https://github.com/BVLC/caffe), which is not easy to install and is inconsistent with the training code in PyTorch.
 Our project thus transfers the weights and models to [detectron2](https://github.com/facebookresearch/detectron2) that could be few-line installed and has PyTorch front-end.
 
-The features extracted from this repo is compatible with LXMERT code and pre-trained models [here](https://github.com/airsplay/lxmert).
+The features extracted from this repo is compatible with LXMERT code and pre-trained models [here](https://github.com/airsplay/lxmert). Results have been locally verified.
 
 
 ## Installation
@@ -46,10 +46,13 @@ Without Attributes:
 1. Single image: [demo extraction](demo/demo_feature_extraction.ipynb)
 2. Single image (Given boxes): [demo extraction](demo/demo_feature_extraction_given_box.ipynb)
 
-## Feature Extraction Scripts for LXMERT
+## Feature Extraction Scripts for MS COCO
 **Note: this script does not include attribute. If you want to use attributes, please modify it according to [the demo](demo/demo_feature_extraction_attr.ipynb)**
 1. For MS COCO (VQA): [vqa script](demo/detectron2_mscoco_proposal_maxnms.py)
 
+## External Links
+1. The orignal CAFFE implementation [https://github.com/peteanderson80/bottom-up-attention](https://github.com/peteanderson80/bottom-up-attention), and its [docker image](https://hub.docker.com/r/airsplay/bottom-up-attention).
+2. [bottom-up-attention.pytorch](https://github.com/MILVLG/bottom-up-attention.pytorch) maintained by [MIL-LAB](http://mil.hdu.edu.cn/). 
 
 
 ## References
