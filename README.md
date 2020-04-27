@@ -50,11 +50,9 @@ Without Attributes:
 ### Proof of Correctness
 1. As shown in [demo](demo/feature_correctness.ipynb)
 
-Note: 
+Note: You might find a little difference between the caffe features and pytorch features in this verification demo. It is because the verification uses the setup "Given box" instead of "Predicted boxes". If the features are extracted from scratch (i.e., features with predicted boxes), they are exactly the same. 
 
-You might find a little difference between the caffe features and pytorch features. It is because it use the setup "Given box" for verification. If the features are extracted from scratch (i.e., features with predicted boxes), they should be exactly the same. 
-
-In details, "Given box" will use feature with the final predicted boxes (after box regression), however, the extracted features will use the features of the proposals. I illustrate this in below:
+Detailed explanation is here; "Given box" will use feature with the final predicted boxes (after box regression), however, the extracted features will use the features of the proposals. I illustrate this in below:
 
 Feature extraction (using predicted boxes):
 ```
