@@ -37,6 +37,7 @@ python setup.py build develop
 ### Object Detection
 [demo vg detection](demo/demo_vg_detection.ipynb)
 
+
 ### Feature Extraction 
 With Attributes:
 1. Single image: [demo extraction](demo/demo_feature_extraction_attr.ipynb)
@@ -45,6 +46,28 @@ With Attributes:
 Without Attributes:
 1. Single image: [demo extraction](demo/demo_feature_extraction.ipynb)
 2. Single image (Given boxes): [demo extraction](demo/demo_feature_extraction_given_box.ipynb)
+
+### Proof of Correctness
+1. As shown in [demo](demo/feature_correctness.ipynb)
+
+Note: 
+
+You might find a little difference between the caffe features and pytorch features. It is because it use the setup "Given box" for verification. If the features are extracted from scratch (i.e., features with predicted boxes), they should be exactly the same. 
+
+In details, "Given box" will use feature with the final predicted boxes (after box regression), however, the extracted features will use the features of the proposals. I illustrate this in below:
+
+Feature extraction (using predicted boxes):
+```
+ResNet --> RPN --> RoiPooling + Res5 --> Box Regression --> BOX
+                                      |-------------------> Feature --> Label
+                                                                  |-> Attribute
+```
+Feature extraction (using given boxes):
+```
+ResNet --> RPN --> RoiPooling + Res5 --> Box Regression --> BOX
+                                           |--> RoIPooling + Res5 --> Feature --> Label
+                                                                              |-> Attribute
+```
 
 ## Feature Extraction Scripts for MS COCO
 **Note: this script does not include attribute. If you want to use attributes, please modify it according to [the demo](demo/demo_feature_extraction_attr.ipynb)**
