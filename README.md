@@ -42,7 +42,29 @@ Without Attributes:
 1. Single image: [demo extraction](demo/demo_feature_extraction.ipynb)
 2. Single image (Given boxes): [demo extraction](demo/demo_feature_extraction_given_box.ipynb)
 
-### Proof of Correctness
+## Feature Extraction Scripts for MS COCO
+**Note: this script does not include attribute. If you want to use attributes, please modify it according to [the demo](demo/demo_feature_extraction_attr.ipynb)**
+1. For MS COCO (VQA): [vqa script](demo/detectron2_mscoco_proposal_maxnms.py)
+
+
+## Note
+1. If the weight is not automatically downloaded, please try manual downloading:
+   ```
+   wget --no-check-certificate https://nlp1.cs.unc.edu/models/faster_rcnn_from_caffe_attr.pkl -P ~/.torch/fvcore_cache/models/
+   wget --no-check-certificate https://nlp1.cs.unc.edu/models/faster_rcnn_from_caffe.pkl -P ~/.torch/fvcore_cache/models/
+   ```
+2. The default weight is same to the 'alternative pretrained model' in the original github [here](https://github.com/peteanderson80/bottom-up-attention#demo), which is trained with 36 bbxes. If you want to use the original detetion trained with 10~100 bbxes, please use the following weight:
+   ```
+   http://nlp.cs.unc.edu/models/faster_rcnn_from_caffe_attr_original.pkl
+   ```
+
+
+## External Links
+1. The orignal CAFFE implementation [https://github.com/peteanderson80/bottom-up-attention](https://github.com/peteanderson80/bottom-up-attention), and its [docker image](https://hub.docker.com/r/airsplay/bottom-up-attention).
+2. [bottom-up-attention.pytorch](https://github.com/MILVLG/bottom-up-attention.pytorch) maintained by [MIL-LAB](http://mil.hdu.edu.cn/). 
+
+
+## Proof of Correctness
 1. As shown in [demo](demo/feature_correctness.ipynb)
 
 Note: You might find a little difference between the caffe features and pytorch features in this verification demo. It is because the verification uses the setup "Given box" instead of "Predicted boxes". If the features are extracted from scratch (i.e., features with predicted boxes), they are exactly the same. 
@@ -60,21 +82,6 @@ Feature extraction (using given boxes):
 ResNet --> RPN --> RoiPooling + Res5 --> Box Regression --> BOX
                                            |--> RoIPooling + Res5 --> Feature --> Label
                                                                               |-> Attribute
-```
-
-## Feature Extraction Scripts for MS COCO
-**Note: this script does not include attribute. If you want to use attributes, please modify it according to [the demo](demo/demo_feature_extraction_attr.ipynb)**
-1. For MS COCO (VQA): [vqa script](demo/detectron2_mscoco_proposal_maxnms.py)
-
-## External Links
-1. The orignal CAFFE implementation [https://github.com/peteanderson80/bottom-up-attention](https://github.com/peteanderson80/bottom-up-attention), and its [docker image](https://hub.docker.com/r/airsplay/bottom-up-attention).
-2. [bottom-up-attention.pytorch](https://github.com/MILVLG/bottom-up-attention.pytorch) maintained by [MIL-LAB](http://mil.hdu.edu.cn/). 
-
-## Note
-If the weight is not automatically downloaded, please try manual downloading:
-```
-wget --no-check-certificate https://nlp1.cs.unc.edu/models/faster_rcnn_from_caffe_attr.pkl -P ~/.torch/fvcore_cache/models/
-wget --no-check-certificate https://nlp1.cs.unc.edu/models/faster_rcnn_from_caffe.pkl -P ~/.torch/fvcore_cache/models/
 ```
 
 ## References
