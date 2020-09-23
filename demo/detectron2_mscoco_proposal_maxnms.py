@@ -26,7 +26,8 @@ from detectron2.modeling.roi_heads.fast_rcnn import FastRCNNOutputLayers, FastRC
 
 
 D2_ROOT = os.path.dirname(os.path.dirname(detectron2.__file__)) # Root of detectron2
-DATA_ROOT = os.getenv('COCO_IMG_ROOT', '/ssd-playpen/data/mscoco/images/')
+# DATA_ROOT = os.getenv('COCO_IMG_ROOT', '/ssd-playpen/data/mscoco/images/')
+DATA_ROOT = '/content/test_images'
 MIN_BOXES = 36
 MAX_BOXES = 36
 
@@ -172,6 +173,7 @@ def extract_feat(outfile, detector, pathXid):
     # Check existing images in tsv file.
     wanted_ids = set([image_id[1] for image_id in pathXid])
     found_ids = set()
+
     if os.path.exists(outfile):
         with open(outfile, 'r') as tsvfile:
             reader = csv.DictReader(tsvfile, delimiter='\t', fieldnames=FIELDNAMES)
@@ -194,31 +196,32 @@ def extract_feat(outfile, detector, pathXid):
                 break
             """
 
-def load_image_ids(img_root, split_dir):
+# def load_image_ids(img_root, split_dir):
+def load_image_ids(img_root):
     """images in the same directory are in the same split"""
     pathXid = []
-    img_root = os.path.join(img_root, split_dir)
+    # img_root = os.path.join(img_root, split_dir)
     for name in os.listdir(img_root):
         idx = name.split(".")[0]
         pathXid.append(
                 (
                     os.path.join(img_root, name),
                     idx))
-    if split_dir == 'val2014':
-        print("Place the features of minival in the front of val2014 tsv.")
-        # Put the features of 5000 minival images in front.
-        minival_img_ids = set(json.load(open('data/mscoco_imgfeat/coco_minival_img_ids.json')))
-        a, b = [], []
-        for item in pathXid:
-            img_id = item[1]
-            if img_id in minival_img_ids:
-                a.append(item)
-            else:
-                b.append(item)
-        assert len(a) == 5000
-        assert len(a) + len(b) == len(pathXid)
-        pathXid = a + b
-        assert len(pathXid) == 40504
+    # if split_dir == 'val2014':
+    #     print("Place the features of minival in the front of val2014 tsv.")
+    #     # Put the features of 5000 minival images in front.
+    #     minival_img_ids = set(json.load(open('data/mscoco_imgfeat/coco_minival_img_ids.json')))
+    #     a, b = [], []
+    #     for item in pathXid:
+    #         img_id = item[1]
+    #         if img_id in minival_img_ids:
+    #             a.append(item)
+    #         else:
+    #             b.append(item)
+    #     assert len(a) == 5000
+    #     assert len(a) + len(b) == len(pathXid)
+    #     pathXid = a + b
+    #     assert len(pathXid) == 40504
     return pathXid
 
 def build_model():
@@ -255,6 +258,9 @@ def build_model():
     return detector
 
 if __name__ == "__main__":
-    pathXid = load_image_ids(DATA_ROOT, args.split)     # Get paths and ids
+    # pathXid = load_image_ids(DATA_ROOT, args.split)     # Get paths and ids
+    pathXid = load_image_ids(DATA_ROOT)
     detector = build_model()
-    extract_feat('data/mscoco_imgfeat/%s_d2obj36_batch.tsv' % args.split, detector, pathXid)
+    # extract_feat('data/mscoco_imgfeat/%s_d2obj36_batch.tsv' % args.split, detector, pathXid)
+    os.mkdir('/content/save/')
+    extract_feat('/content/save/text_vqa_image_feature.tsv', detector, pathXid)
