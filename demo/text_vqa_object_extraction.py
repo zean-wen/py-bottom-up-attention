@@ -149,7 +149,7 @@ def main():
 
   predictor = load_model(args.config_path, args.weight_path)
 
-  for index, image_id in ids_map['image_ix_to_id'].items():
+  for index, image_id in tqdm(ids_map['image_ix_to_id'].items(), unit='image', desc = 'image object extraction'):
     image_file = os.path.join(args.img_folder, image_id + '.jpg')
     img = cv2.imread(file_path)
     img_bbox, roi_features = doit(img, predictor)
