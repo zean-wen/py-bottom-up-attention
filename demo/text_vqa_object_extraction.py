@@ -1,5 +1,6 @@
 import os
 import io
+import argparse
 import json
 import h5py
 import numpy as np
@@ -17,19 +18,24 @@ from detectron2.modeling.postprocessing import detector_postprocess
 from detectron2.modeling.roi_heads.fast_rcnn import FastRCNNOutputLayers, FastRCNNOutputs, fast_rcnn_inference_single_image
 
 
-def get_parser(self):
+def get_parser():
+
   parser = argparse.ArgumentParser()
+
   parser.add_argument("--config_path", default="./configs/VG-Detection/faster_rcnn_R_101_C4_attr_caffemaxpool.yaml", type=str, help="config path")
   parser.add_argument("--weight_path", default="../faster_rcnn_from_caffe_attr.pkl", type=str, help="pretrained model weight path")
   parser.add_argument("--img_index_file", type=str, help="Image index to id file")
   parser.add_argument("--img_folder", type=str, help="Image folder path")
   parser.add_argument("--tier", type=str, help="train, val, or test")
   parser.add_argument("--save_path", type=str, help="path to save object features")
-  return parser
+
+  args = parser.parse_args()
+
+  return args
 
 
 def load_model(config_path, weight_path):
-  data_path = 'data/genome/1600-400-20'
+  data_path = 'demo/data/genome/1600-400-20'
 
   vg_classes = []
   with open(os.path.join(data_path, 'objects_vocab.txt')) as f:
@@ -139,22 +145,29 @@ def main():
 
   args = get_parser()
 
-  with open(arg.img_index_file, 'r') as f:
+  with open(args.img_index_file, 'r') as f:
     ids_map = json.load(f)
 
   h5file_path = os.path.join(args.save_path, '{}_objects.h5'.format(args.tier))
   object_file = h5py.File(h5file_path,'w')
-  object_file.create_dataset("bboxes", (len(ids_map),36,4), dtype='f4')
-  object_file.create_dataset("features", (len(ids_map),36,2048), dtype='f4')
+  object_file.create_dataset("bboxes", (len(ids_map['image_ix_to_id']),36,4), dtype='f4')
+  object_file.create_dataset("features", (len(ids_map['image_ix_to_id']),36,2048), dtype='f4')
 
   predictor = load_model(args.config_path, args.weight_path)
 
   for index, image_id in tqdm(ids_map['image_ix_to_id'].items(), unit='image', desc = 'image object extraction'):
     image_file = os.path.join(args.img_folder, image_id + '.jpg')
-    img = cv2.imread(file_path)
-    img_bbox, roi_features = doit(img, predictor)
-    object_file['bboxes'][index] = img_bbox
-    object_file['features'][index] = roi_features
+    img = cv2.imread(image_file)
+    img_bbox_raw, roi_features_raw = doit(img, predictor)
+
+    img_bbox = np.zeros((36,4), dtype='float32') 
+    roi_features = np.zeros((36,2048), dtype='float32')
+
+    img_bbox[:len(img_bbox_raw),:] = img_bbox_raw
+    roi_features[:len(roi_features_raw),:] = roi_features_raw
+
+    object_file['bboxes'][int(index)] = img_bbox
+    object_file['features'][int(index)] = roi_features
   
   object_file.close()
 
