@@ -23,8 +23,8 @@ def get_parser():
   parser = argparse.ArgumentParser()
 
   parser.add_argument("--config_path", default="./configs/VG-Detection/faster_rcnn_R_101_C4_attr_caffemaxpool.yaml", type=str, help="config path")
-  parser.add_argument("--weight_path", default="../faster_rcnn_from_caffe_attr.pkl", type=str, help="pretrained model weight path")
-  parser.add_argument("--img_folder", type=str, help="Image folder path")
+  parser.add_argument("--weight_path", default="./faster_rcnn_from_caffe_attr.pkl", type=str, help="pretrained model weight path")
+  parser.add_argument("--image_folder", type=str, help="Image folder path")
   parser.add_argument("--tiers", type=str, default='train_val_test',help="tier to extract")
   parser.add_argument("--save_path", type=str, help="path to save object features")
 
@@ -59,7 +59,7 @@ def load_model(config_path, weight_path):
   cfg.MODEL.WEIGHTS = weight_path
   predictor = DefaultPredictor(cfg)
 
-  return predictor, vg_classes, vg_attrs
+  return predictor, vg_classes
 
 
 def doit(raw_image, predictor):
@@ -139,19 +139,20 @@ def tier_object_extraction(tier, predictor, vg_classes, args):
   print('Extractiong {} image object feautres'.format(tier))
   tier_image_folder = os.path.join(args.image_folder, '{}_images'.format(tier))
   tier_object = {}
-  for image_id in tqdm(os.listdir(tier_image_folder), unit='image', desc = 'image object extraction'):
-    image_file = os.path.join(args.img_folder, image_id + '.jpg')
-    img = cv2.imread(image_file)
+  image_files = os.listdir(tier_image_folder)
+  for image_file in tqdm(image_files, unit='image', desc = 'image object extraction'):
+    image_file_path = os.path.join(tier_image_folder, image_file)
+    image_id = image_file[:-4]
+    img = cv2.imread(image_file_path)
     instances, roi_features_raw = doit(img, predictor)
     img_bboxes_raw = instances.get_fields()['pred_boxes'].tensor.cpu().numpy()
     roi_features_raw = roi_features_raw.cpu().numpy()
-    assert len(img_bbox_raw) == len(roi_features_raw)
+    assert len(img_bboxes_raw) == len(roi_features_raw)
     img_bbox = np.zeros((36,4), dtype='float32') 
     roi_features = np.zeros((36,2048), dtype='float32')
-    img_bbox[:len(img_bbox_raw),:] = img_bbox_raw
+    img_bbox[:len(img_bboxes_raw),:] = img_bboxes_raw
     roi_features[:len(roi_features_raw),:] = roi_features_raw
     pred_class = [vg_classes[index] for index in  instances.get_fields()['pred_classes']]
-    assert len(pred_class) == 36
 
     tier_object[image_id] = {
       'pred_boxes': img_bbox,
@@ -169,7 +170,7 @@ def main():
 
   predictor, vg_classes = load_model(args.config_path, args.weight_path)
 
-  tiers = args.tier.split('_')
+  tiers = args.tiers.split('_')
   for tier in tiers:
     tier_object_extraction(tier, predictor, vg_classes, args)
 
