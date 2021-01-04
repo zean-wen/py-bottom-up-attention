@@ -25,8 +25,9 @@ def get_parser():
   parser.add_argument("--config_path", default="./configs/VG-Detection/faster_rcnn_R_101_C4_attr_caffemaxpool.yaml", type=str, help="config path")
   parser.add_argument("--weight_path", default="./faster_rcnn_from_caffe_attr.pkl", type=str, help="pretrained model weight path")
   parser.add_argument("--image_folder", type=str, help="Image folder path")
-  parser.add_argument("--tiers", type=str, default='train_val_test',help="tier to extract")
+  parser.add_argument("--tiers", type=str, default='val_test_train',help="tier to extract")
   parser.add_argument("--save_path", type=str, help="path to save object features")
+  parser.add_argument("--img_index_folder", type=str, help="Image index to id file")
 
   args = parser.parse_args()
 
@@ -137,12 +138,16 @@ def doit(raw_image, predictor):
 
 def tier_object_extraction(tier, predictor, vg_classes, args):
   print('Extractiong {} image object feautres'.format(tier))
-  tier_image_folder = os.path.join(args.image_folder, '{}_images'.format(tier))
+  img_index_file = os.path.join(args.img_index_folder, '{}_ids_map.json'.format(tier))
+  with open(img_index_file, 'r') as f:
+    ids_map = json.load(f)
+  if tier == 'val':
+    tier_image_folder = os.path.join(args.image_folder, '{}_images'.format('train'))
+  else:
+    tier_image_folder = os.path.join(args.image_folder, '{}_images'.format(tier))
   tier_object = {}
-  image_files = os.listdir(tier_image_folder)
-  for image_file in tqdm(image_files, unit='image', desc = 'image object extraction'):
-    image_file_path = os.path.join(tier_image_folder, image_file)
-    image_id = image_file[:-4]
+  for image_id in tqdm(ids_map['image_ix_to_id'].values(), unit='image', desc = 'image object extraction'):
+    image_file_path = os.path.join(tier_image_folder, image_id + '.jpg')
     img = cv2.imread(image_file_path)
     instances, roi_features_raw = doit(img, predictor)
     img_bboxes_raw = instances.get_fields()['pred_boxes'].tensor.cpu().numpy()
