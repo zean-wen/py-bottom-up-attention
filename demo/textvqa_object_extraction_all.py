@@ -149,14 +149,9 @@ def tier_object_extraction(tier, predictor, vg_classes, args):
   for image_id in tqdm(ids_map['image_ix_to_id'].values(), unit='image', desc = 'image object extraction'):
     image_file_path = os.path.join(tier_image_folder, image_id + '.jpg')
     img = cv2.imread(image_file_path)
-    instances, roi_features_raw = doit(img, predictor)
-    img_bboxes_raw = instances.get_fields()['pred_boxes'].tensor.cpu().numpy()
-    roi_features_raw = roi_features_raw.cpu().numpy()
-    assert len(img_bboxes_raw) == len(roi_features_raw)
-    img_bbox = np.zeros((36,4), dtype='float32') 
-    roi_features = np.zeros((36,2048), dtype='float32')
-    img_bbox[:len(img_bboxes_raw),:] = img_bboxes_raw
-    roi_features[:len(roi_features_raw),:] = roi_features_raw
+    instances, roi_features = doit(img, predictor)
+    img_bbox = instances.get_fields()['pred_boxes'].tensor.cpu().tolist()
+    roi_features = roi_features.cpu().tolist()
     pred_class = [vg_classes[index] for index in  instances.get_fields()['pred_classes']]
 
     tier_object[image_id] = {
